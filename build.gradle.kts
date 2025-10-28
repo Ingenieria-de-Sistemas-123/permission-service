@@ -18,12 +18,18 @@ repositories {
     mavenCentral()
 }
 
+val flywayVersion = "10.20.0"
+
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-validation")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+    implementation("org.springframework.boot:spring-boot-starter-actuator")
+
     implementation("org.postgresql:postgresql:42.7.4")
-    implementation("org.flywaydb:flyway-core")
+
+    implementation("org.flywaydb:flyway-core:$flywayVersion")
+    implementation("org.flywaydb:flyway-database-postgresql:$flywayVersion")
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
 }

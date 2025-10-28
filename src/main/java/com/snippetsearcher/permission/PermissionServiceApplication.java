@@ -5,7 +5,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
 public class PermissionServiceApplication {
-    public static void main(String[] args) {
-        SpringApplication.run(PermissionServiceApplication.class, args);
-    }
+  public static void main(String[] args) {
+    SpringApplication.run(PermissionServiceApplication.class, args);
+  }
 }
