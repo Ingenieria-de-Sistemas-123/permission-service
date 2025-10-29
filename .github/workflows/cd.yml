@@ -72,6 +72,6 @@ jobs:
           script: |
             pwd
             cd infra
-            echo ${{ secrets.GITHUB_PAT }} | sudo docker login -u ${{ github.actor }} --password-stdin ghcr.io
+            echo ${{ secrets.GH_PAT }} | sudo docker login -u ${{ github.actor }} --password-stdin ghcr.io
             sudo docker compose -f docker-compose.dev.yml pull permission-service
             sudo docker compose -f docker-compose.dev.yml up -d permission-service
