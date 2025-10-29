@@ -1,16 +1,19 @@
 plugins {
-    java
-    id("org.springframework.boot") version "3.3.5"
-    id("io.spring.dependency-management") version "1.1.6"
+    id("java")
+    id("org.springframework.boot") version "3.5.6"
+    id("io.spring.dependency-management") version "1.1.7"
+    id("jacoco")
     id("com.diffplug.spotless") version "6.25.0"
+    id("maven-publish")
 }
 
 group = "com.snippetsearcher"
-version = "0.1.0"
+version = "0.0.1-SNAPSHOT"
+description = "Snippet CRUD + validation via language-service"
 
 java {
     toolchain {
-        languageVersion.set(JavaLanguageVersion.of(21))
+        languageVersion = JavaLanguageVersion.of(21)
     }
 }
 
@@ -18,29 +21,106 @@ repositories {
     mavenCentral()
 }
 
-val flywayVersion = "10.20.0"
-
 dependencies {
-    implementation("org.springframework.boot:spring-boot-starter-web")
-    implementation("org.springframework.boot:spring-boot-starter-validation")
-    implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.springframework.boot:spring-boot-starter-actuator")
+    implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+    implementation("org.springframework.boot:spring-boot-starter-validation")
+    implementation("org.springframework.boot:spring-boot-starter-web")
+    implementation("org.flywaydb:flyway-core")
+    implementation("org.flywaydb:flyway-database-postgresql")
 
-    implementation("org.postgresql:postgresql:42.7.4")
-
-    implementation("org.flywaydb:flyway-core:$flywayVersion")
-    implementation("org.flywaydb:flyway-database-postgresql:$flywayVersion")
+    runtimeOnly("org.postgresql:postgresql")
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
+    testImplementation("org.springframework.boot:spring-boot-testcontainers")
+    testImplementation("org.testcontainers:junit-jupiter")
+    testImplementation("org.testcontainers:postgresql")
+    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+
+    implementation("org.projectlombok:lombok:1.18.32")
+    annotationProcessor("org.projectlombok:lombok:1.18.32")
+    testImplementation("org.projectlombok:lombok:1.18.32")
+    testAnnotationProcessor("org.projectlombok:lombok:1.18.32")
 }
 
-tasks.test {
+tasks.named<Test>("test") {
     useJUnitPlatform()
 }
 
 spotless {
     java {
+        target("**/*.java")
         googleJavaFormat()
-        target("src/**/*.java")
+        trimTrailingWhitespace()
+        endWithNewline()
+        indentWithSpaces(4)
+    }
+}
+
+tasks.withType<Test>().configureEach {
+    useJUnitPlatform()
+    finalizedBy(tasks.named("jacocoTestReport"))
+}
+
+jacoco {
+    toolVersion = "0.8.11"
+}
+
+// Configura el reporte de JaCoCo (la tarea ya existe con el plugin)
+tasks.named<JacocoReport>("jacocoTestReport") {
+    reports {
+        xml.required.set(true)
+        html.required.set(true)
+    }
+    executionData.setFrom(
+        fileTree(buildDir) {
+            include(
+                "jacoco/test.exec",
+                "jacoco/test*.exec",
+                "outputs/unit_test_code_coverage/*/*.ec"
+            )
+        }
+    )
+}
+
+// Verificación de cobertura (la tarea también existe con el plugin)
+tasks.named<JacocoCoverageVerification>("jacocoTestCoverageVerification") {
+    violationRules {
+        rule {
+            limit {
+                minimum = 0.00.toBigDecimal()
+            }
+        }
+    }
+    executionData.setFrom(
+        fileTree(buildDir) {
+            include(
+                "jacoco/test.exec",
+                "jacoco/test*.exec",
+                "outputs/unit_test_code_coverage/*/*.ec"
+            )
+        }
+    )
+}
+
+tasks.named("check") {
+    dependsOn("spotlessCheck", "jacocoTestReport", "jacocoTestCoverageVerification")
+}
+
+publishing {
+    publications {
+        create<MavenPublication>("maven") {
+            from(components["java"])
+        }
+    }
+    repositories {
+        maven {
+            name = "GitHubPackages"
+            url = uri("https://maven.pkg.github.com/Ingenieria-de-Sistemas-123/PrintScript")
+            credentials {
+                username = System.getenv("GITHUB_ACTOR") ?: ""
+                password = System.getenv("GITHUB_TOKEN") ?: ""
+            }
+        }
     }
 }
