@@ -5,7 +5,6 @@ on:
     types: [ completed ]
   push:
     branches: ['**']
-
 jobs:
   publish:
     if: ${{ github.event_name == 'push' || github.event.workflow_run.conclusion == 'success' }}
@@ -19,6 +18,12 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Set up JDK
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
@@ -27,42 +32,25 @@ jobs:
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+          password: ${{ github.token}}
 
       - name: Normalize owner to lowercase
         id: img
         run: echo "owner=${GITHUB_REPOSITORY_OWNER,,}" >> $GITHUB_OUTPUT
 
-      # Soporta 'push' y 'workflow_run'
       - name: Compute tag safely
         id: tag
         shell: bash
         run: |
           set -euo pipefail
-
-          if [[ "${GITHUB_EVENT_NAME}" == "push" ]]; then
-            REF_TYPE="${GITHUB_REF_TYPE}"
-            REF_NAME="${GITHUB_REF_NAME}"
-            SHA="${GITHUB_SHA}"
+          # Si es push de tag → usa ese tag; si no → usa commit-<sha7>
+          if [[ "${GITHUB_REF_TYPE}" == "tag" ]]; then
+            echo "value=${GITHUB_REF_NAME}" >> "$GITHUB_OUTPUT"
           else
-            # workflow_run: tomar del payload
-            REF_TYPE="branch"
-            REF_NAME="${{ github.event.workflow_run.head_branch }}"
-            SHA="${{ github.event.workflow_run.head_sha }}"
+            echo "value=commit-${GITHUB_SHA::7}" >> "$GITHUB_OUTPUT"
           fi
-
-          if [[ "${REF_TYPE}" == "tag" ]]; then
-            TAG="${REF_NAME}"
-          else
-            TAG="commit-${SHA:0:7}"
-          fi
-
-          SAFE_BRANCH="${REF_NAME//\//-}"
-
-          {
-            echo "value=${TAG}"
-            echo "branch=${SAFE_BRANCH}"
-          } >> "$GITHUB_OUTPUT"
+          SAFE_BRANCH="${GITHUB_REF_NAME//\//-}"
+          echo "branch=${SAFE_BRANCH}" >> "$GITHUB_OUTPUT"
 
       - name: Build and Push Image
         uses: docker/build-push-action@v6
