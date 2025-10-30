@@ -17,7 +17,4 @@ spring:
   flyway:
     enabled: true
 
-server:
-  port: ${PORT:8083}
-
 management.endpoints.web.exposure.include: health,info
