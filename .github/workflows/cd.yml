@@ -32,7 +32,7 @@ jobs:
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
-          password: ${{ github.token }}
+          password: ${{ github.token}}
 
       - name: Normalize owner to lowercase
         id: img
@@ -62,16 +62,3 @@ jobs:
             ghcr.io/${{ steps.img.outputs.owner }}/permission-service:latest
             ghcr.io/${{ steps.img.outputs.owner }}/permission-service:${{ steps.tag.outputs.value }}
             ghcr.io/${{ steps.img.outputs.owner }}/permission-service:${{ steps.tag.outputs.branch }}
-
-      - name: Update service on VM with new image
-        uses: appleboy/ssh-action@v1.0.3
-        with:
-          host: ${{ secrets.VM_HOST }}
-          username: ${{ secrets.VM_USER }}
-          key: ${{ secrets.DEPLOY_SSH_KEY }}
-          script: |
-            pwd
-            cd infra
-            echo ${{ secrets.GH_PAT }} | sudo docker login -u ${{ github.actor }} --password-stdin ghcr.io
-            sudo docker compose -f docker-compose.dev.yml pull permission-service
-            sudo docker compose -f docker-compose.dev.yml up -d permission-service
