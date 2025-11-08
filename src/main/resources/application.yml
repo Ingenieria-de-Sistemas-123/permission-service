@@ -17,4 +17,18 @@ spring:
   flyway:
     enabled: true
 
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: ${auth0.issuer}
+
+auth0:
+  issuer: ${AUTH0_ISSUER:https://TU-DOMINIO.us.auth0.com/}
+  audience: ${AUTH0_AUDIENCE:https://snippetsearcher-api}
+
+logging:
+  level:
+    com.snippetsearcher.permission: DEBUG
+    org.springframework.security: INFO
 management.endpoints.web.exposure.include: health,info
