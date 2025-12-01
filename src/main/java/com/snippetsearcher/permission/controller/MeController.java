@@ -7,7 +7,7 @@ import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/me")
+@RequestMapping("/api/me")
 public class MeController {
   private final UserProvisioningService provisioning;
 
