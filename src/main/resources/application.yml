@@ -21,12 +21,9 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          # Prioriza la variable estándar que ya escribe el workflow; cae a AUTH0_ISSUER si no existe
           issuer-uri: ${SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI:${AUTH0_ISSUER}}
-
 auth0:
-  issuer: ${AUTH0_ISSUER:https://TU-DOMINIO.us.auth0.com/}
-  audience: ${AUTH0_AUDIENCE:https://snippetsearcher-api}
+  audience: ${AUTH0_AUDIENCE}
 
 logging:
   level:
