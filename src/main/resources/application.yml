@@ -3,9 +3,9 @@ spring:
     name: permission-service
 
   datasource:
-    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5436}/${DB_NAME:permission_db}
-    username: ${DB_USER:postgres}
-    password: ${DB_PASSWORD:postgres}
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://permission-db:5432/permission_db}
+    username: ${SPRING_DATASOURCE_USERNAME:postgres}
+    password: ${SPRING_DATASOURCE_PASSWORD:postgres}
 
   jpa:
     hibernate:
@@ -21,7 +21,8 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: ${auth0.issuer}
+          # Prioriza la variable estándar que ya escribe el workflow; cae a AUTH0_ISSUER si no existe
+          issuer-uri: ${SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI:${AUTH0_ISSUER}}
 
 auth0:
   issuer: ${AUTH0_ISSUER:https://TU-DOMINIO.us.auth0.com/}
@@ -31,4 +32,9 @@ logging:
   level:
     com.snippetsearcher.permission: DEBUG
     org.springframework.security: INFO
-management.endpoints.web.exposure.include: health,info
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
