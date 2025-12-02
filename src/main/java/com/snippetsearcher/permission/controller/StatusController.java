@@ -6,8 +6,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class StatusController {
 
-    @GetMapping("/actuator/health")
-    public String health() {
-        return "UP";
-    }
+  @GetMapping("/actuator/health")
+  public String health() {
+    return "UP";
+  }
 }
