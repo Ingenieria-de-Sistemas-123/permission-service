@@ -73,19 +73,19 @@ public class OAuth2ResourceServerSecurityConfiguration {
   // 👇 Configuración CORS para permitir al front en localhost:5173
   @Bean
   public CorsConfigurationSource corsConfigurationSource() {
-      CorsConfiguration config = new CorsConfiguration();
+    CorsConfiguration config = new CorsConfiguration();
 
-      config.setAllowedOrigins(List.of(
-              "http://localhost:5173",
-              "https://snippet-org-dev.duckdns.org",
-              "https://snippet-org-prod.duckdns.org"
-      ));
-      config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-      config.setAllowedHeaders(List.of("Authorization", "Content-Type"));
-      config.setAllowCredentials(true);
+    config.setAllowedOrigins(
+        List.of(
+            "http://localhost:5173",
+            "https://snippet-org-dev.duckdns.org",
+            "https://snippet-org-prod.duckdns.org"));
+    config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+    config.setAllowedHeaders(List.of("Authorization", "Content-Type"));
+    config.setAllowCredentials(true);
 
-      UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-      source.registerCorsConfiguration("/**", config);
-      return source;
+    UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+    source.registerCorsConfiguration("/**", config);
+    return source;
   }
 }
