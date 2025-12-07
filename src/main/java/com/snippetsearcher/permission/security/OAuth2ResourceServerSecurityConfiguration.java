@@ -78,6 +78,7 @@ public class OAuth2ResourceServerSecurityConfiguration {
     config.setAllowedOrigins(
         List.of(
             "http://localhost:5173",
+            "https://localhost:8080",
             "https://snippet-org-dev.duckdns.org",
             "https://snippet-org-prod.duckdns.org"));
     config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
