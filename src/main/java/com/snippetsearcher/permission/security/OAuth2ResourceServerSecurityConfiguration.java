@@ -9,6 +9,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.oauth2.core.DelegatingOAuth2TokenValidator;
 import org.springframework.security.oauth2.core.OAuth2TokenValidator;
 import org.springframework.security.oauth2.jwt.*;
@@ -31,9 +32,9 @@ public class OAuth2ResourceServerSecurityConfiguration {
   @Bean
   public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
     http
-        // 👇 habilitamos CORS
+        // habilitamos CORS
         .cors(cors -> {})
-        .csrf(csrf -> csrf.disable())
+        .csrf(AbstractHttpConfigurer::disable)
         .authorizeHttpRequests(
             auth ->
                 auth
@@ -70,7 +71,7 @@ public class OAuth2ResourceServerSecurityConfiguration {
     return jwtDecoder;
   }
 
-  // 👇 Configuración CORS para permitir al front en localhost:5173
+  // Configuración CORS para permitir al front en localhost:5173
   @Bean
   public CorsConfigurationSource corsConfigurationSource() {
     CorsConfiguration config = new CorsConfiguration();
