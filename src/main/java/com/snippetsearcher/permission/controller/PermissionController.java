@@ -57,4 +57,5 @@ public class PermissionController {
     }
     return ResponseEntity.ok(all.stream().map(PermissionResponse::from).toList());
   }
+
 }
