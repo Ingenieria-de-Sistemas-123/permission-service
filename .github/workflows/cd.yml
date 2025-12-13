@@ -86,7 +86,7 @@ jobs:
           script: |
             set -euo pipefail
             echo "[deploy-dev] Using image: ${{ needs.publish.outputs.image_repo }}:${{ needs.publish.outputs.deploy_tag }}"
-            cd "${{ secrets.DEPLOY_WORKDIR_DEV }}"
+            cd "${{ secrets.DEPLOY_WORKDIR }}"
             echo "$GHCR_LOGIN_TOKEN" | docker login ghcr.io -u "$GHCR_LOGIN_USER" --password-stdin
             COMPOSE_FILE="docker-compose.dev.yml"
             ENV_FILE=".env.dev"
