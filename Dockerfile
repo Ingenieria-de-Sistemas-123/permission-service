@@ -10,4 +10,7 @@ WORKDIR /app
 ENV JAVA_OPTS=""
 # Busca el jar generado (con o sin -SNAPSHOT)
 COPY --from=builder /app/build/libs/*.jar /app/app.jar
-ENTRYPOINT ["sh", "-c", "-javaagent:/app/newrelic.jar", "-jar" , "java $JAVA_OPTS -jar /app/app.jar"]
+# Expone el puerto estándar del servicio
+EXPOSE 8080
+# Usa sh -c para que JAVA_OPTS se aplique si se necesita (p.ej. -Xms/-Xmx, system props)
+ENTRYPOINT ["sh", "-c", "java $JAVA_OPTS -jar /app/app.jar"]
