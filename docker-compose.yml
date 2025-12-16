@@ -19,6 +19,7 @@ services:
       context: .
       dockerfile: Dockerfile
     container_name: permission-service
+    env_file: [.env]
     environment:
 
       DB_HOST: permission-db
@@ -30,9 +31,16 @@ services:
       AUTH0_ISSUER: https://dev-7t5evioih4aq30t7.us.auth0.com/
       AUTH0_AUDIENCE: https://snippet-api
 
+      NEW_RELIC_APP_NAME: "${NEW_RELIC_APP_NAME}"
+      NEW_RELIC_LICENSE_KEY: "${NEW_RELIC_LICENSE_KEY}"
+      JAVA_TOOL_OPTIONS: "-javaagent:/newrelic/newrelic.jar"
+
+    volumes:
+      - ./newrelic:/newrelic.jar:ro
+
     depends_on:
       permission-db:
         condition: service_healthy
-
     ports:
       - "8083:8080"
+
