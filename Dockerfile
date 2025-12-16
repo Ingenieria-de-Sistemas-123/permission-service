@@ -10,4 +10,4 @@ WORKDIR /app
 ENV JAVA_OPTS=""
 # Busca el jar generado (con o sin -SNAPSHOT)
 COPY --from=builder /app/build/libs/*.jar /app/app.jar
-ENTRYPOINT ["sh", "-c", "java $JAVA_OPTS -jar /app/app.jar"]
+ENTRYPOINT ["sh", "-c", "-javaagent:/app/newrelic.jar", "-jar" , "java $JAVA_OPTS -jar /app/app.jar"]
